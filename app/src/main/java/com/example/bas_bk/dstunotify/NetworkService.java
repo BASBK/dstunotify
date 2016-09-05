@@ -13,12 +13,15 @@ import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.LogRecord;
+
+import io.realm.Realm;
 
 /**
  * Created by BAS_BK on 03.09.2016.
@@ -60,6 +63,8 @@ public class NetworkService extends Service {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -67,16 +72,30 @@ public class NetworkService extends Service {
         return START_STICKY;
     }
 
-    public void Run() throws ExecutionException, InterruptedException {
+    public void Run() throws ExecutionException, InterruptedException, JSONException {
         networkAsyncTask = new NetworkAsyncTask();
         networkAsyncTask.execute("GetMessages", LOGIN, PASS, "1");
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 try {
-                    String r = networkAsyncTask.get();
-                    if (r != null) {
-                        MainActivity.Save2LocalBase(r);
+                    Realm realm = Realm.getDefaultInstance();
+                    String jsonString = networkAsyncTask.get();
+                    if (!jsonString.isEmpty() && !jsonString.equals("[]") && !jsonString.equals("null") && !jsonString.equals("off")) {
+                        JSONArray jsonArray = new JSONArray(jsonString);
+                        JSONArray IDs = new JSONArray();
+                        for (int i = jsonArray.length()-1; i >= 0; i--) {
+                            IDs.put(jsonArray.getJSONObject(i).getInt("Id"));
+                            realm.beginTransaction();
+                            Message msg = new Message(jsonArray.getJSONObject(i).getInt("Id"), jsonArray.getJSONObject(i).getString("TextMessage"),
+                                    jsonArray.getJSONObject(i).getString("Sender"),
+                                    jsonArray.getJSONObject(i).getString("Theme"),
+                                    jsonArray.getJSONObject(i).getString("Date"), jsonArray.getJSONObject(i).getBoolean("IsWatched"));
+                            realm.copyToRealm(msg);
+                            realm.commitTransaction();
+                        }
+                        NetworkAsyncTask networkAsyncTask = new NetworkAsyncTask();
+                        networkAsyncTask.execute("VerifyMessages", IDs.toString(), LOGIN, PASS);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -87,19 +106,20 @@ public class NetworkService extends Service {
                 }
             }
         });
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.mipmap.ic_launcher)
-//                        .setContentTitle("My notification")
-//                        .setContentText("Hello World!");
-//
-//        Intent intent = new Intent(this, MainActivity.class);
-//        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-//
-//        mBuilder.setContentIntent(pIntent);
-//        mBuilder.mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-//
-//        nm.notify(1, mBuilder.build());
+        JSONArray jsonArray = new JSONArray(networkAsyncTask.get());
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("У вас новые сообщения! " + "(" + jsonArray.length() + ")")
+                        .setContentText("Нажмите, чтобы перейти к просмотру");
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        mBuilder.setContentIntent(pIntent);
+        mBuilder.mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        nm.notify(1, mBuilder.build());
     }
     @Override
     public void onDestroy(){

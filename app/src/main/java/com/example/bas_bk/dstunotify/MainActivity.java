@@ -7,33 +7,33 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
-import io.realm.Sort;
 
 
 public class MainActivity extends AppCompatActivity {
     RealmResults<Message> realmMessages;
+    public static ArrayList<Message> realmList;
     public static RealmMessageAdapter realmAdapter;
     public static Realm realm;
+    public static RecyclerView rvMessages;
     Intent i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         realm = Realm.getDefaultInstance();
-        RecyclerView rvMessages = (RecyclerView) findViewById(R.id.msgList);
+        rvMessages = (RecyclerView) findViewById(R.id.msgList);
         realmMessages = realm.where(Message.class).findAll();
-        realmAdapter = new RealmMessageAdapter(this, realmMessages);
+        realmList = new ArrayList<>();
+        for (int i = realmMessages.size()-1; i >= 0 ; i--){
+            realmList.add(realmMessages.get(i));
+        }
+        realmAdapter = new RealmMessageAdapter(this, realmList);
         DefaultItemAnimator animator = new DefaultItemAnimator();
         animator.setAddDuration(200);
         animator.setRemoveDuration(200);
@@ -68,15 +68,13 @@ public class MainActivity extends AppCompatActivity {
 //        networkAsyncTask.execute("GetMessages", LoginActivity.LOGIN, LoginActivity.PASS, "1");
 //        Save2LocalBase(networkAsyncTask.get());
         stopService(i);
-
     }
 
     public static void Save2LocalBase(String jsonString) throws JSONException {
-        if (!jsonString.isEmpty() && !jsonString.equals("[]") && !jsonString.equals("null")) {
+        if (!jsonString.isEmpty() && !jsonString.equals("[]") && !jsonString.equals("null") && !jsonString.equals("off")) {
             JSONArray jsonArray = new JSONArray(jsonString);
             JSONArray IDs = new JSONArray();
-            Integer curSize = realmAdapter.getItemCount();
-            for (int i = 0; i < jsonArray.length(); i++) {
+            for (int i = jsonArray.length()-1; i >= 0; i--) {
                 IDs.put(jsonArray.getJSONObject(i).getInt("Id"));
                 realm.beginTransaction();
                 Message msg = new Message(jsonArray.getJSONObject(i).getInt("Id"), jsonArray.getJSONObject(i).getString("TextMessage"),
@@ -85,8 +83,10 @@ public class MainActivity extends AppCompatActivity {
                         jsonArray.getJSONObject(i).getString("Date"), jsonArray.getJSONObject(i).getBoolean("IsWatched"));
                 realm.copyToRealm(msg);
                 realm.commitTransaction();
+                realmList.add(0, msg);
             }
             realmAdapter.notifyItemRangeInserted(0, jsonArray.length());
+            rvMessages.smoothScrollToPosition(0);
             NetworkAsyncTask networkAsyncTask = new NetworkAsyncTask();
             networkAsyncTask.execute("VerifyMessages", IDs.toString(), LoginActivity.LOGIN, LoginActivity.PASS);
         }
