@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">DSTUNotify</string>
+    <string name="sender_name">Отправитель</string>
+    <string name="theme_name">Тема</string>
+    <string name="time">24h</string>
+    <string name="message_part">Часть сообщенька</string>
+    <string name="full_message">Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века.</string>
+    <string name="title_activity_login">Вход</string>
+
+    <!-- Strings related to login -->
+    <string name="login_label">Номер зачётки:</string>
+    <string name="pass_label">Пароль:</string>
+    <string name="submit_button">Вход</string>
+    <string name="to_signup">Нет аккаунта? </string>
+    <string name="signup"><u>Создайте!</u></string>
+
+    <!-- Strings related to sign up -->
+    <string name="book_number">Номер зачётки:</string>
+    <string name="phone_number">Номер телефона:</string>
+    <string name="email_address">Email:</string>
+    <string name="pass">Пароль:</string>
+    <string name="pass_confirm">Подтвердите пароль:</string>
+    <string name="faculty">Факультет:</string>
+    <string name="department">Кафедра:</string>
+    <string name="group">Группа:</string>
+    <string name="confirmation">Я подтверждаю правильность введённых данных и даю своё согласие на их обработку</string>
+    <string name="signup_button">Регистрация</string>
+</resources>

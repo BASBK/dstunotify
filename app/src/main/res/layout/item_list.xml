@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:paddingTop="5dp"
+    android:paddingLeft="5dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:onClick="onItemClick">
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="8dp"
+        android:textSize="8pt"
+        android:textStyle="bold"
+        android:text="@string/time" />
+
+    <TextView
+        android:id="@+id/sender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/time"
+        android:layout_marginBottom="3dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textStyle="bold"
+        android:textSize="12pt"
+        android:text="@string/sender_name" />
+
+    <TextView
+        android:id="@+id/Theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sender"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/time"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textStyle="bold"
+        android:textSize="10pt"
+        android:text="@string/theme_name" />
+    <CheckBox
+        android:id="@+id/add2fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/Theme"
+        android:button="@null"
+        android:drawableRight="@android:drawable/btn_star"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/time"
+        android:layout_alignLeft="@id/time"
+        />
+    <TextView
+        android:id="@+id/messagePart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Theme"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/time"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textStyle="bold"
+        android:textSize="8pt"
+        android:text="@string/message_part"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#C0C0C0"
+        android:layout_below="@id/messagePart"
+        android:layout_marginTop="5dp"
+         />
+</RelativeLayout>
