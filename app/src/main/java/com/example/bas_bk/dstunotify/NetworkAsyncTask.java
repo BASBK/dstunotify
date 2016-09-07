@@ -41,7 +41,6 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
     }
     @Override
     protected String doInBackground(String...params) {
-        if (isServerReachable()) {
             String data = null;
             try {
                 if (params.length == 2) {
@@ -62,8 +61,6 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
                 e.printStackTrace();
             }
             return data;
-        }
-        return "off";
     }
     private String SignUp(String StudentJson){
         String data = null;
@@ -219,34 +216,20 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
         return data;
     }
 
-    public boolean isServerReachable()
-    {
-        boolean exists = false;
-
-        try {
-            SocketAddress sockaddr = new InetSocketAddress("dstuns.ddns.net", 3000);
-            // Create an unbound socket
-            Socket sock = new Socket();
-
-            // This method will block no more than timeoutMs.
-            // If the timeout occurs, SocketTimeoutException is thrown.
-            int timeoutMs = 2000;   // 2 seconds
-            sock.connect(sockaddr, timeoutMs);
-            exists = true;
-        }catch(Exception e){
-        }
-        return exists;
-    }
-
-    private String ReadResponse(HttpURLConnection connection) throws IOException {
+    private String ReadResponse(HttpURLConnection connection) {
         String data;
         BufferedReader reader;
-        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder buf = new StringBuilder();
-        while ((data=reader.readLine()) != null){
-            buf.append(data);
+        try {
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder buf = new StringBuilder();
+            while ((data=reader.readLine()) != null){
+                buf.append(data);
+            }
+            return buf.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "off";
         }
-        return buf.toString();
     }
     @Override
     protected void onPostExecute(String result){

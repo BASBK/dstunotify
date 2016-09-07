@@ -11,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -18,7 +20,7 @@ import io.realm.RealmResults;
  * Created by BAS_BK on 31.08.2016.
  */
 public class RealmMessageAdapter extends RecyclerView.Adapter<RealmMessageAdapter.ViewHolder> {
-    private static RealmResults<Message> mMessages;
+    private static ArrayList<Message> mMessages;
     private static Context mContext;
     private Realm realm = Realm.getDefaultInstance();
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -34,7 +36,6 @@ public class RealmMessageAdapter extends RecyclerView.Adapter<RealmMessageAdapte
             theme = (TextView) itemView.findViewById(R.id.Theme);
             time = (TextView) itemView.findViewById(R.id.time);
             messagePart = (TextView) itemView.findViewById(R.id.messagePart);
-            cbSelect = (CheckBox) itemView.findViewById(R.id.add2fav);
 
         }
     }
@@ -53,7 +54,7 @@ public class RealmMessageAdapter extends RecyclerView.Adapter<RealmMessageAdapte
         ((TextView) view.findViewById(R.id.time)).setTypeface(null, Typeface.BOLD);
     }
 
-    public RealmMessageAdapter(Context context, RealmResults<Message> messages){
+    public RealmMessageAdapter(Context context, ArrayList<Message> messages){
         mMessages = messages;
         mContext = context;
     }
@@ -82,18 +83,6 @@ public class RealmMessageAdapter extends RecyclerView.Adapter<RealmMessageAdapte
         TextView messagePart = viewHolder.messagePart;
         messagePart.setText(message.getText());
 
-        viewHolder.cbSelect.setOnCheckedChangeListener(null);
-
-        viewHolder.cbSelect.setChecked(message.isSelected());
-
-        viewHolder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                realm.beginTransaction();
-                message.setSelect(isChecked);
-                realm.commitTransaction();
-            }
-        });
 
         if (message.isWatched()){
             DisplayAsWatched(viewHolder.itemView);
