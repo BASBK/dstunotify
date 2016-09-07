@@ -34,6 +34,7 @@ public class NetworkService extends Service {
     Timer timer;
     TimerTask timerTask;
     NotificationManager nm;
+    public static Integer unReadNots;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -42,7 +43,7 @@ public class NetworkService extends Service {
 
     @Override
     public void onCreate(){
-
+        unReadNots = 0;
         preferences = getSharedPreferences("Account", MODE_PRIVATE);
         LOGIN = preferences.getString("LOGIN", "");
         PASS = preferences.getString("PASS", "");
@@ -75,22 +76,24 @@ public class NetworkService extends Service {
     public void Run() throws ExecutionException, InterruptedException, JSONException {
         networkAsyncTask = new NetworkAsyncTask();
         networkAsyncTask.execute("GetMessages", LOGIN, PASS, "1");
+        final String jsonString = networkAsyncTask.get();
+        final JSONArray[] jsonArray = new JSONArray[1];
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 try {
                     Realm realm = Realm.getDefaultInstance();
-                    String jsonString = networkAsyncTask.get();
+
                     if (!jsonString.isEmpty() && !jsonString.equals("[]") && !jsonString.equals("null") && !jsonString.equals("off")) {
-                        JSONArray jsonArray = new JSONArray(jsonString);
+                        jsonArray[0] = new JSONArray(jsonString);
                         JSONArray IDs = new JSONArray();
-                        for (int i = jsonArray.length()-1; i >= 0; i--) {
-                            IDs.put(jsonArray.getJSONObject(i).getInt("Id"));
+                        for (int i = jsonArray[0].length()-1; i >= 0; i--) {
+                            IDs.put(jsonArray[0].getJSONObject(i).getInt("Id"));
                             realm.beginTransaction();
-                            Message msg = new Message(jsonArray.getJSONObject(i).getInt("Id"), jsonArray.getJSONObject(i).getString("TextMessage"),
-                                    jsonArray.getJSONObject(i).getString("Sender"),
-                                    jsonArray.getJSONObject(i).getString("Theme"),
-                                    jsonArray.getJSONObject(i).getString("Date"), jsonArray.getJSONObject(i).getBoolean("IsWatched"));
+                            Message msg = new Message(jsonArray[0].getJSONObject(i).getInt("Id"), jsonArray[0].getJSONObject(i).getString("TextMessage"),
+                                    jsonArray[0].getJSONObject(i).getString("Sender"),
+                                    jsonArray[0].getJSONObject(i).getString("Theme"),
+                                    jsonArray[0].getJSONObject(i).getString("Date"), jsonArray[0].getJSONObject(i).getBoolean("IsWatched"));
                             realm.copyToRealm(msg);
                             realm.commitTransaction();
                         }
@@ -99,27 +102,25 @@ public class NetworkService extends Service {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
                 }
             }
         });
-        JSONArray jsonArray = new JSONArray(networkAsyncTask.get());
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("У вас новые сообщения! " + "(" + jsonArray.length() + ")")
-                        .setContentText("Нажмите, чтобы перейти к просмотру");
+        if (jsonArray[0] != null) {
+            unReadNots += jsonArray[0].length();
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle("У вас новые сообщения! " + "(" + unReadNots + ")")
+                            .setContentText("Нажмите, чтобы перейти к просмотру");
 
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            Intent intent = new Intent(this, MainActivity.class);
+            PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        mBuilder.setContentIntent(pIntent);
-        mBuilder.mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+            mBuilder.setContentIntent(pIntent);
+            mBuilder.mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-        nm.notify(1, mBuilder.build());
+            nm.notify(0, mBuilder.build());
+        }
     }
     @Override
     public void onDestroy(){

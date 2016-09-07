@@ -18,14 +18,11 @@ public class Message extends RealmObject implements Parcelable{
     @PrimaryKey
     public long remoteId;
 
-
-
     public String Sender;
     public String Theme;
     public String Date;
     public String Text;
     public Boolean watched;
-    public Boolean favorite;
 
     protected Message(Parcel in) {
         remoteId = in.readLong();
@@ -34,7 +31,6 @@ public class Message extends RealmObject implements Parcelable{
         Theme = in.readString();
         Date = in.readString();
         watched = in.readInt() != 0;
-        favorite = in.readInt() != 0;
     }
 
     @Override
@@ -45,7 +41,6 @@ public class Message extends RealmObject implements Parcelable{
         dest.writeString(Theme);
         dest.writeString(Date);
         dest.writeInt(watched ? 1 : 0);
-        dest.writeInt(favorite ? 1 : 0);
     }
 
     public static final Creator<Message> CREATOR = new Creator<Message>() {
@@ -88,14 +83,6 @@ public class Message extends RealmObject implements Parcelable{
         return watched;
     }
 
-    public boolean isSelected(){
-        return favorite;
-    }
-
-    public void setSelect(boolean select){
-        favorite = select;
-    }
-
     public Message(){
         super();
     }
@@ -108,7 +95,6 @@ public class Message extends RealmObject implements Parcelable{
         this.Theme = Theme;
         this.Date = Date;
         this.watched = watched;
-        favorite = false;
     }
 
     public void watch(){

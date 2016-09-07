@@ -9,13 +9,14 @@
 
     <TextView
         android:id="@+id/time"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="15dp"
         android:layout_marginTop="8dp"
         android:textSize="8pt"
         android:textStyle="bold"
+        android:gravity="right"
         android:text="@string/time" />
 
     <TextView
@@ -45,19 +46,7 @@
         android:textStyle="bold"
         android:textSize="10pt"
         android:text="@string/theme_name" />
-    <CheckBox
-        android:id="@+id/add2fav"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/Theme"
-        android:button="@null"
-        android:drawableRight="@android:drawable/btn_star"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="14dp"
-        android:layout_marginTop="15dp"
-        android:layout_below="@id/time"
-        android:layout_alignLeft="@id/time"
-        />
+
     <TextView
         android:id="@+id/messagePart"
         android:layout_width="wrap_content"
