@@ -33,6 +33,7 @@ SharedPreferences preferences;
         messageFull.setText(message.getText());
         if (!message.isWatched()){
             Long id = message.getRemoteId();
+            String s = null;
             JSONArray jsonArray = null;
             try {
                 jsonArray = new JSONArray(preferences.getString("jsonArray", "[]"));
@@ -43,15 +44,16 @@ SharedPreferences preferences;
             NetworkAsyncTask networkAsyncTask = new NetworkAsyncTask();
             networkAsyncTask.execute("MarkMessage", jsonArray.toString() , LoginActivity.LOGIN, LoginActivity.PASS);
             try {
-                if (networkAsyncTask.get().equals("off")){
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("jsonArray", jsonArray.toString());
-                    editor.apply();
-                }
+                s = networkAsyncTask.get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
+            }
+            if (s.equals("off")){
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("jsonArray", jsonArray.toString());
+                editor.apply();
             }
         }
     }

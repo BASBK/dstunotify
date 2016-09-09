@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 
 import com.google.gson.Gson;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,10 +16,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.NoRouteToHostException;
 import java.net.ProtocolException;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -73,8 +76,15 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.setReadTimeout(4000);
             data = ReadResponse(connection);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ProtocolException e1) {
+            e1.printStackTrace();
+            return "off";
+        }catch (MalformedURLException e1) {
+            e1.printStackTrace();
+            return "off";
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return "off";
         }
         return data;
     }
@@ -90,8 +100,15 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.setReadTimeout(4000);
             data = ReadResponse(connection);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ProtocolException e1) {
+            e1.printStackTrace();
+            return "off";
+        }catch (MalformedURLException e1) {
+            e1.printStackTrace();
+            return "off";
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return "off";
         }
         return data;
     }
@@ -108,8 +125,15 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.setReadTimeout(4000);
             data = ReadResponse(connection);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ProtocolException e1) {
+            e1.printStackTrace();
+            return "off";
+        }catch (MalformedURLException e1) {
+            e1.printStackTrace();
+            return "off";
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return "off";
         }
         return data;
     }
@@ -126,8 +150,15 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.setReadTimeout(4000);
             data = ReadResponse(connection);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ProtocolException e1) {
+            e1.printStackTrace();
+            return "off";
+        }catch (MalformedURLException e1) {
+            e1.printStackTrace();
+            return "off";
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return "off";
         }
         return data;
     }
@@ -144,8 +175,15 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.setReadTimeout(4000);
             data = ReadResponse(connection);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ProtocolException e1) {
+            e1.printStackTrace();
+            return "off";
+        }catch (MalformedURLException e1) {
+            e1.printStackTrace();
+            return "off";
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return "off";
         }
         return data;
     }
@@ -158,16 +196,20 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
         try {
             url = new URL(SERVER_URL + "Send/GetMessages?Login=" + Login + "&Password=" + Password + "&New=" + New);
             connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(4000);
             connection.connect();
             connection.setRequestMethod("GET");
             connection.setReadTimeout(4000);
             data = ReadResponse(connection);
         } catch (ProtocolException e1) {
             e1.printStackTrace();
-        } catch (MalformedURLException e1) {
+            return "off";
+        }catch (MalformedURLException e1) {
             e1.printStackTrace();
+            return "off";
         } catch (IOException e1) {
             e1.printStackTrace();
+            return "off";
         }
         return data;
     }
@@ -186,10 +228,13 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
             data = ReadResponse(connection);
         } catch (ProtocolException e1) {
             e1.printStackTrace();
-        } catch (MalformedURLException e1) {
+            return "off";
+        }catch (MalformedURLException e1) {
             e1.printStackTrace();
+            return "off";
         } catch (IOException e1) {
             e1.printStackTrace();
+            return "off";
         }
         return data;
     }
@@ -201,17 +246,20 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
         try {
             url = new URL(SERVER_URL + "Send/MarkMessage?IdMessage=" + id + "&Login=" + Login + "&Password=" + Password);
             connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(100);
             connection.connect();
             connection.setRequestMethod("GET");
-            connection.setReadTimeout(4000);
+            connection.setReadTimeout(1000);
             data = ReadResponse(connection);
-
         } catch (ProtocolException e1) {
             e1.printStackTrace();
-        } catch (MalformedURLException e1) {
+            return "off";
+        }catch (MalformedURLException e1) {
             e1.printStackTrace();
+            return "off";
         } catch (IOException e1) {
             e1.printStackTrace();
+            return "off";
         }
         return data;
     }
