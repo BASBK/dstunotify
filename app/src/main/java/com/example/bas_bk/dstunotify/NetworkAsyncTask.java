@@ -281,15 +281,15 @@ public class NetworkAsyncTask extends AsyncTask<String, Void, String> {
     }
     @Override
     protected void onPostExecute(String result){
-        Gson gson = new Gson();
-        if (flag == 1){
-            SignUpActivity.facultySpin.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, gson.fromJson(result, String[].class)));
-        }
-        else if (flag == 2){
-            SignUpActivity.depSpin.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, gson.fromJson(result, String[].class)));
-        }
-        else if (flag == 3){
-            SignUpActivity.groupSpin.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, gson.fromJson(result, String[].class)));
+        if (!result.equals("off")) {
+            Gson gson = new Gson();
+            if (flag == 1) {
+                SignUpActivity.facultySpin.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, gson.fromJson(result, String[].class)));
+            } else if (flag == 2) {
+                SignUpActivity.depSpin.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, gson.fromJson(result, String[].class)));
+            } else if (flag == 3) {
+                SignUpActivity.groupSpin.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, gson.fromJson(result, String[].class)));
+            }
         }
         super.onPostExecute(result);
     }
